@@ -20,6 +20,7 @@ namespace AirHeatModel_Sim
 
         PidController pi = new PidController();
         Filter filter = new Filter();
+        DateTime dateTime = new DateTime();
 
         public Form1()
         {
@@ -119,15 +120,16 @@ namespace AirHeatModel_Sim
         {
             ToutPlOne = Tout + (Ts / Theta_t) * (-Tout + Kh * uk[time] + Tenv);
             ToutF= filter.LowPassFilter(Tout);
-            Plot(Tout, "Temperature Un-Filtered", chart1, 26, 20);
-            Plot(ToutF, "Temperature Filtered", chart1, 26, 20);
-            Plot(uk[time], "Control Signal", chart2, 5, 0);
+            dateTime = DateTime.Now;
+            Plot(Tout, "Temperature Un-Filtered", chart1, 26, 20, dateTime);
+            Plot(ToutF, "Temperature Filtered", chart1, 26, 20, dateTime);
+            Plot(uk[time], "Control Signal", chart2, 5, 0, dateTime);
             txtPV.Text = Tout.ToString("N1");
             Tout = ToutPlOne;
         }
 
         //private int GridlinesOffset = 0;
-        private void Plot(double data, string chartN, Chart chart, int max, int min)
+        private void Plot(double data, string chartN, Chart chart, int max, int min, DateTime dateTime)
         {
             //InitChart(chart1);
             //dateTime = DateTime.Now;
@@ -140,7 +142,7 @@ namespace AirHeatModel_Sim
             chart.ChartAreas[0].AxisY.Minimum = min;
             chart.ChartAreas[0].AxisY.Maximum = max;
             chart.ChartAreas["ChartArea1"].AxisX.LabelStyle.Format = "HH:mm:ss";
-            chart.Series[chartN].Points.AddXY(DateTime.Now, data);
+            chart.Series[chartN].Points.AddXY(dateTime, data);
         }
     }
 }

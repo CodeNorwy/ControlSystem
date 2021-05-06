@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using NationalInstruments.NetworkVariable;
 
 namespace AirHeatModel_Sim
 {
@@ -21,6 +22,11 @@ namespace AirHeatModel_Sim
         PidController pi = new PidController();
         Filter filter = new Filter();
         DateTime dateTime = new DateTime();
+
+        private NetworkVariableWriter<double> _writer;
+        private const string NetworkVariableLocation = @"\\localhost\OPC_SCADA\PV";
+        private NetworkVariableWriter<double> _writer2;
+        private const string NetworkVariableLocation2 = @"\\localhost\OPC_SCADA\MV";
 
         public Form1()
         {
@@ -45,15 +51,33 @@ namespace AirHeatModel_Sim
             numSP.DecimalPlaces = 1;
             numSP.Value = new decimal((double)23.1);
             numKp.DecimalPlaces = 1;
-            numKp.Value = new decimal((double)2.4);
+            numKp.Value = new decimal((double)2.8);
             numTi.DecimalPlaces = 1;
             numTi.Maximum = 10000000;
-            numTi.Value = new decimal((double)100.0);
+            numTi.Value = new decimal((double)110.0);
 
             //Filter Parameters
             filter.Ts = Ts;
             filter.Tf = 0.5;
             filter.yk = Tenv;
+
+            ConnectOPCServer();
+
+        }
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _writer.Disconnect();
+            _writer2.Disconnect();
+        }
+
+
+        private void ConnectOPCServer()
+        {
+            _writer = new NetworkVariableWriter<double>(NetworkVariableLocation);
+            _writer.Connect();
+            _writer2 = new NetworkVariableWriter<double>(NetworkVariableLocation2);
+            _writer2.Connect();
+            txtStatus.Text = _writer.ConnectionStatus.ToString();
         }
 
         private void radAut_Click(object sender, EventArgs e)
@@ -125,6 +149,17 @@ namespace AirHeatModel_Sim
             Plot(ToutF, "Temperature Filtered", chart1, 26, 20, dateTime);
             Plot(uk[time], "Control Signal", chart2, 5, 0, dateTime);
             txtPV.Text = Tout.ToString("N1");
+            txtMV.Text = uk[time].ToString("N1");
+            try
+            {
+                _writer.WriteValue(Tout);
+                _writer2.WriteValue(uk[time]);
+            }
+            catch (TimeoutException)
+            {
+                MessageBox.Show("The read has timed out.", "Timeout");
+                return;
+            }
             Tout = ToutPlOne;
         }
 
@@ -132,7 +167,6 @@ namespace AirHeatModel_Sim
         private void Plot(double data, string chartN, Chart chart, int max, int min, DateTime dateTime)
         {
             //InitChart(chart1);
-            //dateTime = DateTime.Now;
             chart.Series[chartN].ChartType = SeriesChartType.Line;
             chart.ResetAutoValues();
             //chart1.ChartAreas[0].AxisX.MajorGrid.IntervalOffset = -GridlinesOffset; //https://stackoverflow.com/questions/31667086/how-to-move-x-axis-grids-on-chart-whenever-a-data-is-added-on-the-chart

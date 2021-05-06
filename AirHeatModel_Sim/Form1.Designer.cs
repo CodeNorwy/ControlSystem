@@ -58,6 +58,7 @@ namespace AirHeatModel_Sim
             this.label8 = new System.Windows.Forms.Label();
             this.txtMV = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.txtStatus = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numMV)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -294,11 +295,19 @@ namespace AirHeatModel_Sim
             this.label9.TabIndex = 13;
             this.label9.Text = "MV:";
             // 
+            // txtStatus
+            // 
+            this.txtStatus.Location = new System.Drawing.Point(929, 182);
+            this.txtStatus.Name = "txtStatus";
+            this.txtStatus.Size = new System.Drawing.Size(100, 20);
+            this.txtStatus.TabIndex = 15;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1137, 688);
+            this.Controls.Add(this.txtStatus);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.txtMV);
             this.Controls.Add(this.label9);
@@ -349,6 +358,7 @@ namespace AirHeatModel_Sim
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtMV;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txtStatus;
     }
 }
 

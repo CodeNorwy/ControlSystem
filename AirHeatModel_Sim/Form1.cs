@@ -69,13 +69,13 @@ namespace AirHeatModel_Sim
         {
             double max = 5;
             double min = 0;
-            if (uk > 5)
+            if (uk > max)
             {
-                return uk = 5;
+                return uk = max;
             }
-            else if (uk < 0)
+            else if (uk < min)
             {
-                return uk = 0;
+                return uk = min;
             }
             else
             {
@@ -126,7 +126,6 @@ namespace AirHeatModel_Sim
             Tout = ToutPlOne;
         }
 
-        DateTime dateTime = new DateTime();
         //private int GridlinesOffset = 0;
         private void Plot(double data, string chartN, Chart chart, int max, int min)
         {
